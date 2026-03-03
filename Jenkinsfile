@@ -11,7 +11,6 @@ pipeline {
         stage('Pull Code From GitHub') {
             steps {
                 git 'https://github.com/Prathiba-D/devops-fastapi-app.git'
-                credentialsId: 'github-pat'  // Your Jenkins credential ID for GitHub PAT
 
             }
         }
