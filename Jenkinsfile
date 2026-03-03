@@ -1,7 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        SONARQUBE_SERVER = 'SonarQubeServer'  // Exact name configured in Jenkins -> Configure System -> SonarQube Servers
+        //PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
+    }
+
     stages {
+
+        stage('Pull Code From GitHub') {
+            steps {
+                git 'https://github.com/Prathiba-D/devops-fastapi-app.git'
+            }
+        }
 
         stage('Verify Python') {
             steps {
@@ -31,11 +42,12 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                export PYTHONPATH=$PWD
-                venv/bin/pytest
+                    export PYTHONPATH=$PWD
+                    venv/bin/pytest
                 '''
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
@@ -43,6 +55,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
