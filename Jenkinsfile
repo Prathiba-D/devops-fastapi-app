@@ -8,12 +8,12 @@ pipeline {
 
     stages {
 
-        stage('Pull Code From GitHub') {
-            steps {
-                git 'https://github.com/Prathiba-D/devops-fastapi-app.git'
+        // stage('Pull Code From GitHub') {
+        //     steps {
+        //         git 'https://github.com/Prathiba-D/devops-fastapi-app.git'
 
-            }
-        }
+        //     }
+        // }
 
         stage('Verify Python') {
             steps {
