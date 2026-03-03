@@ -28,5 +28,11 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                sh 'venv/bin/pytest'
+            }
+        }
+
     }
 }
