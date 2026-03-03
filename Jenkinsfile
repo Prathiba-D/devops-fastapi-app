@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'  // Exact name configured in Jenkins -> Configure System -> SonarQube Servers
-        //PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
+        PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
     }
    
 
