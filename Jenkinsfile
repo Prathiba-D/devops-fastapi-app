@@ -30,7 +30,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'venv/bin/pytest'
+                sh '''
+                export PYTHONPATH=$PWD
+                venv/bin/pytest
+                '''
             }
         }
 
