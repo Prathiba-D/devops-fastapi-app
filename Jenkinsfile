@@ -5,9 +5,6 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQubeServer'  // Exact name configured in Jenkins -> Configure System -> SonarQube Servers
         //PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
     }
-    tools {
-        sonarQubeScanner 'SonarScanner'  // Must match the Name in Global Tool Configuration
-    }
 
     stages {
 
