@@ -36,6 +36,13 @@ pipeline {
                 '''
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    sh 'sonar-scanner'
+                }
+            }
+        }
 
     }
 }
