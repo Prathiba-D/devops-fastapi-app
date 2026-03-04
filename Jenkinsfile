@@ -82,19 +82,20 @@ pipeline {
                 // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
             }
         }
-        stage('Push Trivy Report to GitHub') {
+         stage('Push Trivy Report to GitHub') {
             steps {
                 withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
                     sh '''
                         git config user.name "Jenkins CI"
                         git config user.email "ci-bot@mycompany.com"
 
-                        git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git temp-repo
-                        cd temp-repo
-                        cp ../reports/trivy_report.html .
+                        # Use a temp folder outside the workspace
+                        git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
+                        cp reports/trivy_report.html /tmp/temp-repo/
+                        cd /tmp/temp-repo
 
                         git add trivy_report.html
-                        git commit -m "Update Trivy vulnerability report - ${BUILD_NUMBER}" || echo "No changes to commit"
+                        git commit -m "Update Trivy report - ${BUILD_NUMBER}" || echo "No changes to commit"
                         git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git main
                     '''
                 }
