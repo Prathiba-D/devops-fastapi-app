@@ -74,10 +74,8 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p reports
-                    trivy image --ignore-unfixed --format template \
-                    --template "@contrib/html.tpl" \
-                    --output reports/trivy_report.html \
-                    ${IMAGE_NAME}:${BUILD_NUMBER} || true
+                    trivy image --ignore-unfixed --severity HIGH,CRITICAL --format html \
+                    --output reports/trivy_report.html ${IMAGE_NAME}:${BUILD_NUMBER} || true
                 '''
                 // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
             }
