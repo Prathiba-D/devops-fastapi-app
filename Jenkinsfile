@@ -70,16 +70,38 @@ pipeline {
             }
         }
 
-                stage('Trivy Scan') {
-            steps {
-                sh '''
-                    mkdir -p reports
-                    trivy image --ignore-unfixed --severity HIGH,CRITICAL --format html \
-                    --output reports/trivy_report.html ${IMAGE_NAME}:${BUILD_NUMBER} || true
-                '''
-                // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
-            }
-        }
+        //         stage('Trivy Scan') {
+        //     steps {
+        //         sh '''
+        //             mkdir -p reports
+        //             trivy image --ignore-unfixed --severity HIGH,CRITICAL --format html \
+        //             --output reports/trivy_report.html ${IMAGE_NAME}:${BUILD_NUMBER} || true
+        //         '''
+        //         // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
+        //     }
+        // }
+
+
+        stage('Trivy Scan') {
+    steps {
+        sh '''
+            mkdir -p reports
+
+            # Download official HTML template if not present
+            if [ ! -f html.tpl ]; then
+                curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
+            fi
+
+            trivy image \
+              --ignore-unfixed \
+              --severity HIGH,CRITICAL \
+              --format template \
+              --template "@html.tpl" \
+              -o reports/trivy_report.html \
+              ${IMAGE_NAME}:${BUILD_NUMBER} || true
+        '''
+    }
+}
          stage('Push Trivy Report to GitHub') {
             steps {
                 withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
