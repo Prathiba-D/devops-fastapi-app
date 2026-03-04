@@ -1,6 +1,7 @@
 # Use official Python base image (slim version to keep image small)
 # FROM python:3.11-slim
-FROM python:3.11
+# FROM python:3.11
+FROM python:3.11-alpine
 
 # Set working directory
 WORKDIR /app
