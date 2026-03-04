@@ -102,26 +102,36 @@ pipeline {
         '''
     }
 }
-         stage('Push Trivy Report to GitHub') {
-            steps {
-                withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
-                    sh '''
-                        git config user.name "Jenkins CI"
-                        git config user.email "ci-bot@mycompany.com"
+         stage('Push Trivy Report to GitHub Pages') {
+    steps {
+        withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
+            sh '''
+                git config --global user.name "Jenkins CI"
+                git config --global user.email "ci-bot@mycompany.com"
 
-                        # Use a temp folder outside the workspace
-                        rm -rf /tmp/temp-repo
-                        git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
-                        cp reports/trivy_report.html /tmp/temp-repo/
-                        cd /tmp/temp-repo
+                # Clean temp directory
+                rm -rf /tmp/temp-repo
 
-                        git add trivy_report.html
-                        git commit -m "Update Trivy report - ${BUILD_NUMBER}" || echo "No changes to commit"
-                        git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git main
-                    '''
-                }
-            }
+                # Clone repo
+                git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
+                cd /tmp/temp-repo
+
+                # Create clean orphan gh-pages branch
+                git checkout --orphan gh-pages || git checkout gh-pages
+                git rm -rf . || true
+
+                # Copy latest Trivy report
+                cp /var/lib/jenkins/workspace/fastapi-ci/reports/trivy_report.html .
+
+                git add trivy_report.html
+                git commit -m "Update Trivy report - Build ${BUILD_NUMBER}" || echo "No changes to commit"
+
+                # Force push to gh-pages
+                git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git gh-pages --force
+            '''
         }
+    }
+}
       
     }
 }
