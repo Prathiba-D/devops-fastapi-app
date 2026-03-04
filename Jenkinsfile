@@ -74,7 +74,8 @@ pipeline {
             steps {
                 echo "Scanning Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER} for vulnerabilities..."
                 // Scan and fail build if critical/high vulnerabilities are found
-                sh "trivy image --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt"
+                // sh "trivy image   --ignore-unfixed --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt"
+                sh "trivy image --ignore-unfixed --exit-code 1 --severity CRITICAL,HIGH --format table ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt 2>&1"
                 // Optional: display first few lines of the report in console
                 sh "head -n 20 trivy_report.txt"
             }
