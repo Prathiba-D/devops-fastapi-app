@@ -64,7 +64,7 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         // This will tell Jenkins to use the SonarScanner tool installed in Jenkins
-        withSonarQubeEnv('SONARQUBE_SERVER') {  // Name of your SonarQube server
+        withSonarQubeEnv("${SONARQUBE_SERVER}") {  // Name of your SonarQube server
             // Use the Jenkins tool by its name
             withSonarScanner('SonarScanner') {  // Name you gave in Global Tool Config
                 sh 'sonar-scanner'
