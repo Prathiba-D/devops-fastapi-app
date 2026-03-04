@@ -7,6 +7,9 @@ pipeline {
         //PATH = "/opt/sonar-scanner/bin:${env.PATH}"   // Add the actual sonar-scanner path
         IMAGE_NAME = "fastapi-app"  // image name
 
+        AWS_REGION = "ap-south-1"
+        ECR_REPO = "205842488113.dkr.ecr.ap-south-1.amazonaws.com/fastapi-app"
+
     }
    
 
@@ -83,58 +86,77 @@ pipeline {
 
 
         stage('Trivy Scan') {
-    steps {
-        sh '''
-            mkdir -p reports
-
-            # Download official HTML template if not present
-            if [ ! -f html.tpl ]; then
-                curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
-            fi
-
-            trivy image \
-              --ignore-unfixed \
-              --severity HIGH,CRITICAL \
-              --format template \
-              --template "@html.tpl" \
-              -o reports/trivy_report.html \
-              ${IMAGE_NAME}:${BUILD_NUMBER} || true
-        '''
-    }
-}
-         stage('Push Trivy Report to GitHub Pages') {
-    steps {
-        withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
-            sh '''
-                git config --global user.name "Jenkins CI"
-                git config --global user.email "ci-bot@mycompany.com"
-
-                # Clean temp directory
-                rm -rf /tmp/temp-repo
-
-                # Clone repository
-                git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
-                cd /tmp/temp-repo
-
-                # Create clean gh-pages branch
-                git checkout --orphan gh-pages || git checkout gh-pages
-                git rm -rf . || true
-
-                # Copy Trivy report
-                cp /var/lib/jenkins/workspace/fastapi-ci/reports/trivy_report.html .
-
-                # Create index.html to avoid 404
-                echo '<meta http-equiv="refresh" content="0; url=trivy_report.html">' > index.html
-
-                git add trivy_report.html index.html
-                git commit -m "Update Trivy report - Build ${BUILD_NUMBER}" || echo "No changes to commit"
-
-                # Force push to gh-pages
-                git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git gh-pages --force
-            '''
+            steps {
+                sh '''
+                    mkdir -p reports
+        
+                    # Download official HTML template if not present
+                    if [ ! -f html.tpl ]; then
+                        curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
+                    fi
+        
+                    trivy image \
+                      --ignore-unfixed \
+                      --severity HIGH,CRITICAL \
+                      --format template \
+                      --template "@html.tpl" \
+                      -o reports/trivy_report.html \
+                      ${IMAGE_NAME}:${BUILD_NUMBER} || true
+                '''
+            }
         }
-    }
-}
+        
+         stage('Push Trivy Report to GitHub Pages') {
+            steps {
+                withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
+                    sh '''
+                        git config --global user.name "Jenkins CI"
+                        git config --global user.email "ci-bot@mycompany.com"
+        
+                        # Clean temp directory
+                        rm -rf /tmp/temp-repo
+        
+                        # Clone repository
+                        git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
+                        cd /tmp/temp-repo
+        
+                        # Create clean gh-pages branch
+                        git checkout --orphan gh-pages || git checkout gh-pages
+                        git rm -rf . || true
+        
+                        # Copy Trivy report
+                        cp /var/lib/jenkins/workspace/fastapi-ci/reports/trivy_report.html .
+        
+                        # Create index.html to avoid 404
+                        echo '<meta http-equiv="refresh" content="0; url=trivy_report.html">' > index.html
+        
+                        git add trivy_report.html index.html
+                        git commit -m "Update Trivy report - Build ${BUILD_NUMBER}" || echo "No changes to commit"
+        
+                        # Force push to gh-pages
+                        git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git gh-pages --force
+                    '''
+                }
+            }
+        }
+        
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                    echo "Logging in to ECR..."
+                    aws ecr get-login-password --region $AWS_REGION | \
+                    docker login --username AWS --password-stdin $ECR_REPO
+
+                    echo "Tagging image for ECR..."
+                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:${BUILD_NUMBER}
+                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:latest
+
+                    echo "Pushing image to ECR..."
+                    docker push $ECR_REPO:${BUILD_NUMBER}
+                    docker push $ECR_REPO:latest
+                '''
+            }
+        }
       
     }
 }
