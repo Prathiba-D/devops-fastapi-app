@@ -53,15 +53,15 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         withEnv(["PATH=/opt/sonar-scanner/bin:$PATH"]) {
-        //             withSonarQubeEnv("${SONARQUBE_SERVER}") {
-        //                 sh 'sonar-scanner'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                withEnv(["PATH=/opt/sonar-scanner/bin:$PATH"]) {
+                    withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                        sh 'sonar-scanner'
+                    }
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
