@@ -112,18 +112,21 @@ pipeline {
                 # Clean temp directory
                 rm -rf /tmp/temp-repo
 
-                # Clone repo
+                # Clone repository
                 git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
                 cd /tmp/temp-repo
 
-                # Create clean orphan gh-pages branch
+                # Create clean gh-pages branch
                 git checkout --orphan gh-pages || git checkout gh-pages
                 git rm -rf . || true
 
-                # Copy latest Trivy report
+                # Copy Trivy report
                 cp /var/lib/jenkins/workspace/fastapi-ci/reports/trivy_report.html .
 
-                git add trivy_report.html
+                # Create index.html to avoid 404
+                echo '<meta http-equiv="refresh" content="0; url=trivy_report.html">' > index.html
+
+                git add trivy_report.html index.html
                 git commit -m "Update Trivy report - Build ${BUILD_NUMBER}" || echo "No changes to commit"
 
                 # Force push to gh-pages
