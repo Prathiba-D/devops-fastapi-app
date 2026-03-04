@@ -5,6 +5,7 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQubeServer'  // Exact name configured in Jenkins -> Configure System -> SonarQube Servers
         //PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
         //PATH = "/opt/sonar-scanner/bin:${env.PATH}"   // Add the actual sonar-scanner path
+        IMAGE_NAME = "fastapi-app"  // image name
 
     }
    
@@ -59,6 +60,13 @@ pipeline {
                         sh 'sonar-scanner'
                     }
                 }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
             }
         }
       
