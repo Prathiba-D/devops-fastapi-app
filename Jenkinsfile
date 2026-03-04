@@ -69,6 +69,16 @@ pipeline {
                 sh "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
             }
         }
+
+        stage('Scan Docker Image') {
+            steps {
+                echo "Scanning Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER} for vulnerabilities..."
+                // Scan and fail build if critical/high vulnerabilities are found
+                sh "trivy image --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt"
+                // Optional: display first few lines of the report in console
+                sh "head -n 20 trivy_report.txt"
+            }
+        }
       
     }
 }
