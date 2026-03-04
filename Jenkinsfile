@@ -79,7 +79,7 @@ pipeline {
                     --output reports/trivy_report.html \
                     ${IMAGE_NAME}:${BUILD_NUMBER} || true
                 '''
-                archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
+                // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
             }
         }
         stage('Push Trivy Report to GitHub') {
