@@ -88,6 +88,7 @@ pipeline {
                         git config user.email "ci-bot@mycompany.com"
 
                         # Use a temp folder outside the workspace
+                        rm -rf /tmp/temp-repo
                         git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
                         cp reports/trivy_report.html /tmp/temp-repo/
                         cd /tmp/temp-repo
