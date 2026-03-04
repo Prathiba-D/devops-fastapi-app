@@ -70,15 +70,34 @@ pipeline {
             }
         }
 
-        stage('Scan Docker Image') {
+                stage('Trivy Scan') {
             steps {
-                echo "Scanning Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER} for vulnerabilities..."
-                // Scan and fail build if critical/high vulnerabilities are found
-                // sh "trivy image   --ignore-unfixed --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt"
-                // sh "trivy image --ignore-unfixed --exit-code 1 --severity CRITICAL,HIGH --format table ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt 2>&1"
-                sh "trivy image --ignore-unfixed --severity CRITICAL,HIGH --format table ${IMAGE_NAME}:${env.BUILD_NUMBER} > trivy_report.txt 2>&1 || true"
-                // Optional: display first few lines of the report in console
-                sh "head -n 20 trivy_report.txt"
+                sh '''
+                    mkdir -p reports
+                    trivy image --ignore-unfixed --format template \
+                    --template "@contrib/html.tpl" \
+                    --output reports/trivy_report.html \
+                    ${IMAGE_NAME}:${BUILD_NUMBER} || true
+                '''
+                archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
+            }
+        }
+        stage('Push Trivy Report to GitHub') {
+            steps {
+                withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
+                    sh '''
+                        git config user.name "Jenkins CI"
+                        git config user.email "ci-bot@mycompany.com"
+
+                        git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git temp-repo
+                        cd temp-repo
+                        cp ../reports/trivy_report.html .
+
+                        git add trivy_report.html
+                        git commit -m "Update Trivy vulnerability report - ${BUILD_NUMBER}" || echo "No changes to commit"
+                        git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git main
+                    '''
+                }
             }
         }
       
