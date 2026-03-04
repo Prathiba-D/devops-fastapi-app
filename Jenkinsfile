@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'  // Exact name configured in Jenkins -> Configure System -> SonarQube Servers
         //PATH = "/opt/sonar-scanner/bin:$PATH" // Needed if sonar-scanner installed manually
-        PATH = "/opt/sonar-scanner/bin:${env.PATH}"   // Add the actual sonar-scanner path
+        //PATH = "/opt/sonar-scanner/bin:${env.PATH}"   // Add the actual sonar-scanner path
 
     }
    
@@ -52,10 +52,21 @@ pipeline {
             }
         }
 
+//         stage('SonarQube Analysis') {
+//     steps {
+//         withEnv(["PATH=/opt/sonar-scanner/bin:$PATH"]) {
+//             withSonarQubeEnv("${SONARQUBE_SERVER}") {
+//                 sh 'sonar-scanner'
+//             }
+//         }
+//     }
+// }
         stage('SonarQube Analysis') {
     steps {
-        withEnv(["PATH=/opt/sonar-scanner/bin:$PATH"]) {
-            withSonarQubeEnv("${SONARQUBE_SERVER}") {
+        // This will tell Jenkins to use the SonarScanner tool installed in Jenkins
+        withSonarQubeEnv('SONARQUBE_SERVER') {  // Name of your SonarQube server
+            // Use the Jenkins tool by its name
+            withSonarScanner('SonarScanner') {  // Name you gave in Global Tool Config
                 sh 'sonar-scanner'
             }
         }
