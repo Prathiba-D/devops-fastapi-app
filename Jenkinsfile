@@ -11,39 +11,37 @@ pipeline {
         ECR_REPO = "205842488113.dkr.ecr.ap-south-1.amazonaws.com/fastapi-app"
 
     }
-   
-
     stages {
 
+        // Optional: Pull latest code from GitHub
         // stage('Pull Code From GitHub') {
         //     steps {
         //         git 'https://github.com/Prathiba-D/devops-fastapi-app.git'
-
         //     }
         // }
 
         stage('Verify Python') {
             steps {
-                sh 'python3 --version'
+                sh 'python3 --version'  // Ensure Python is installed and version is correct
             }
         }
 
         stage('Create Virtual Environment') {
             steps {
-                sh 'python3 -m venv venv'
+                sh 'python3 -m venv venv'  // Create isolated Python environment
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 sh 'venv/bin/pip install --upgrade pip'
-                sh 'venv/bin/pip install -r requirements.txt'
+                sh 'venv/bin/pip install -r requirements.txt'  // Install project dependencies
             }
         }
 
         stage('Syntax Check') {
             steps {
-                sh 'venv/bin/python -m py_compile main.py'
+                sh 'venv/bin/python -m py_compile main.py'  // Basic Python syntax check
             }
         }
 
@@ -51,7 +49,7 @@ pipeline {
             steps {
                 sh '''
                     export PYTHONPATH=$PWD
-                    venv/bin/pytest
+                    venv/bin/pytest  // Run unit tests
                 '''
             }
         }
@@ -60,7 +58,7 @@ pipeline {
             steps {
                 withEnv(["PATH=/opt/sonar-scanner/bin:$PATH"]) {
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                        sh 'sonar-scanner'
+                        sh 'sonar-scanner'  // Perform SonarQube code quality scan
                     }
                 }
             }
@@ -69,77 +67,67 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER}"
-                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
+                sh '''
+                    docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .  // Build Docker image with unique build number
+                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:${BUILD_NUMBER}  // Tag image with build number
+                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:latest  // Also tag as latest (optional)
+                '''
             }
         }
 
-        //         stage('Trivy Scan') {
-        //     steps {
-        //         sh '''
-        //             mkdir -p reports
-        //             trivy image --ignore-unfixed --severity HIGH,CRITICAL --format html \
-        //             --output reports/trivy_report.html ${IMAGE_NAME}:${BUILD_NUMBER} || true
-        //         '''
-        //         // archiveArtifacts artifacts: 'reports/trivy_report.html', fingerprint: true
-        //     }
-        // }
-
-
+        // Trivy scan to check Docker image for vulnerabilities
         stage('Trivy Scan') {
             steps {
                 sh '''
                     mkdir -p reports
-        
+
                     # Download official HTML template if not present
                     if [ ! -f html.tpl ]; then
                         curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
                     fi
-        
+
                     trivy image \
                       --ignore-unfixed \
                       --severity HIGH,CRITICAL \
                       --format template \
                       --template "@html.tpl" \
                       -o reports/trivy_report.html \
-                      ${IMAGE_NAME}:${BUILD_NUMBER} || true
+                      ${IMAGE_NAME}:${BUILD_NUMBER} || true  // Ignore exit code to not fail the pipeline
                 '''
             }
         }
-        
-         stage('Push Trivy Report to GitHub Pages') {
+
+        // Push Trivy report to GitHub Pages (optional reporting)
+        stage('Push Trivy Report to GitHub Pages') {
             steps {
                 withCredentials([string(credentialsId: 'github-pat', variable: 'PAT')]) {
                     sh '''
                         git config --global user.name "Jenkins CI"
                         git config --global user.email "ci-bot@mycompany.com"
-        
-                        # Clean temp directory
+
+                        # Clean temporary repo
                         rm -rf /tmp/temp-repo
-        
-                        # Clone repository
                         git clone https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git /tmp/temp-repo
                         cd /tmp/temp-repo
-        
-                        # Create clean gh-pages branch
+
+                        # Checkout or create gh-pages branch
                         git checkout --orphan gh-pages || git checkout gh-pages
                         git rm -rf . || true
-        
+
                         # Copy Trivy report
                         cp /var/lib/jenkins/workspace/fastapi-ci/reports/trivy_report.html .
-        
-                        # Create index.html to avoid 404
+                        # Add index.html to avoid 404
                         echo '<meta http-equiv="refresh" content="0; url=trivy_report.html">' > index.html
-        
+
                         git add trivy_report.html index.html
                         git commit -m "Update Trivy report - Build ${BUILD_NUMBER}" || echo "No changes to commit"
-        
-                        # Force push to gh-pages
                         git push https://$PAT@github.com/Prathiba-D/devops-fastapi-app.git gh-pages --force
                     '''
                 }
             }
         }
-        
+
+        // Push Docker image to AWS ECR
         stage('Push Image to ECR') {
             steps {
                 sh '''
@@ -147,25 +135,27 @@ pipeline {
                     aws ecr get-login-password --region $AWS_REGION | \
                     docker login --username AWS --password-stdin $ECR_REPO
 
-                    echo "Tagging image for ECR..."
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:${BUILD_NUMBER}
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:latest
-
                     echo "Pushing image to ECR..."
-                    docker push $ECR_REPO:${BUILD_NUMBER}
-                    docker push $ECR_REPO:latest
+                    docker push $ECR_REPO:${BUILD_NUMBER}  // Push unique build number
+                    docker push $ECR_REPO:latest  // Optional push to latest tag
                 '''
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        // Deploy to Kubernetes using dynamic image → triggers rolling update
+        stage('Deploy to Kubernetes (Automatic Rollout)') {
             steps {
                 sh '''
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+                    echo "Updating Kubernetes Deployment with new image..."
+
+                    # Replace placeholder in deployment.yaml with current build tag
+                    kubectl set image deployment/fastapi-deployment \
+                        fastapi-container=$ECR_REPO:${BUILD_NUMBER}
+
+                    # Wait until rollout completes successfully
+                    kubectl rollout status deployment fastapi-deployment
                 '''
             }
         }
-      
     }
 }
