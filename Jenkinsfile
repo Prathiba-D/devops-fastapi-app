@@ -49,8 +49,9 @@ pipeline {
             steps {
                 sh '''
                     export PYTHONPATH=$PWD
-                    venv/bin/pytest  // Run unit tests
+                    venv/bin/pytest  
                 '''
+                // Run unit tests
             }
         }
 
