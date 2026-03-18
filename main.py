@@ -19,7 +19,7 @@ def home(request: Request):
 @app.post("/submit")
 def submit(name: str = Form(...)):
     logger.info(f"Form submitted with name: {name}")
-    return {"message": f"Hello, {name}! Hope you're fine!!!"}
+    return {"message": f"Hello, {name}! Welcome Home...!!!"}
 
 @app.get("/health")
 def health_check():
