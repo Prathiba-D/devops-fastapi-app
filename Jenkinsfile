@@ -65,24 +65,25 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+       stage('Build & Tag Docker Image') {
             steps {
-                echo "Building Docker image ${IMAGE_NAME}:${env.BUILD_NUMBER}"
-                sh '''
-                    docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .  // Build Docker image with unique build number
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:${BUILD_NUMBER}  // Tag image with build number
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:latest  // Also tag as latest (optional)
-                '''
+                // Build Docker image with unique build number
+                sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
+                
+                // Tag image with build number
+                sh "docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:${BUILD_NUMBER}"
+                
+                // Also tag as latest (optional)
+                sh "docker tag ${IMAGE_NAME}:${BUILD_NUMBER} $ECR_REPO:latest"
             }
-        }
+    }
 
         // Trivy scan to check Docker image for vulnerabilities
         stage('Trivy Scan') {
             steps {
+                
                 sh '''
                     mkdir -p reports
-
-                    # Download official HTML template if not present
                     if [ ! -f html.tpl ]; then
                         curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
                     fi
@@ -93,8 +94,13 @@ pipeline {
                       --format template \
                       --template "@html.tpl" \
                       -o reports/trivy_report.html \
-                      ${IMAGE_NAME}:${BUILD_NUMBER} || true  // Ignore exit code to not fail the pipeline
+                      ${IMAGE_NAME}:${BUILD_NUMBER} || true  
                 '''
+                // ${IMAGE_NAME}:${BUILD_NUMBER} || true  // Ignore exit code to not fail the pipeline
+                // Download official HTML template if not present
+                //     if [ ! -f html.tpl ]; then
+                //         curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o html.tpl
+                //     fi
             }
         }
 
@@ -137,25 +143,25 @@ pipeline {
                     docker login --username AWS --password-stdin $ECR_REPO
 
                     echo "Pushing image to ECR..."
-                    docker push $ECR_REPO:${BUILD_NUMBER}  // Push unique build number
-                    docker push $ECR_REPO:latest  // Optional push to latest tag
+                    docker push $ECR_REPO:${BUILD_NUMBER}  
+                    docker push $ECR_REPO:latest  
                 '''
+                 //docker push $ECR_REPO:${BUILD_NUMBER}  - Push unique build number
+                 // docker push $ECR_REPO:latest  - Optional push to latest tag
             }
         }
 
         // Deploy to Kubernetes using dynamic image → triggers rolling update
         stage('Deploy to Kubernetes (Automatic Rollout)') {
             steps {
-                sh '''
-                    echo "Updating Kubernetes Deployment with new image..."
-
-                    # Replace placeholder in deployment.yaml with current build tag
-                    kubectl set image deployment/fastapi-deployment \
-                        fastapi-container=$ECR_REPO:${BUILD_NUMBER}
-
-                    # Wait until rollout completes successfully
-                    kubectl rollout status deployment fastapi-deployment
-                '''
+                // Print message
+                sh 'echo "Updating Kubernetes Deployment with new image..."'
+                
+                // Replace placeholder in deployment.yaml with current build tag
+                sh "kubectl set image deployment/fastapi-deployment fastapi-container=$ECR_REPO:${BUILD_NUMBER}"
+                
+                // Wait until rollout completes successfully
+                sh 'kubectl rollout status deployment fastapi-deployment'
             }
         }
     }
