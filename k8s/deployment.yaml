@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: PLACEHOLDER
+        #image: PLACEHOLDER
+        image: 205842488113.dkr.ecr.ap-south-1.amazonaws.com/fastapi-app:IMAGE_TAG
         ports:
         - containerPort: 8000
         resources:
