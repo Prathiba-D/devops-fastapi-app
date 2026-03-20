@@ -1,26 +1,23 @@
 from fastapi import FastAPI, Request, Form
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, JSONResponse
-import logging
+from prometheus_client import Counter, Histogram, start_http_server
+import threading
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
+# Metrics
+REQUEST_COUNT = Counter("fastapi_requests_total", "HTTP requests", ["endpoint", "method"])
+REQUEST_LATENCY = Histogram("fastapi_request_latency_seconds", "Request latency", ["endpoint"])
 
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Start metrics server
+threading.Thread(target=lambda: start_http_server(8000), daemon=True).start()
 
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    logger.info("Home page accessed")
-    return templates.TemplateResponse("form.html", {"request": request})
+@app.get("/")
+def home():
+    REQUEST_COUNT.labels(endpoint="/", method="GET").inc()
+    return {"message": "Home"}
 
 @app.post("/submit")
 def submit(name: str = Form(...)):
-    logger.info(f"Form submitted with name: {name}")
-    return {"message": f"Hello, {name}! Welcome Home...!!!"}
-
-@app.get("/health")
-def health_check():
-    return JSONResponse(content={"status": "healthy"})
+    REQUEST_COUNT.labels(endpoint="/submit", method="POST").inc()
+    with REQUEST_LATENCY.labels(endpoint="/submit").time():
+        return {"message": f"Hello, {name}!"}
