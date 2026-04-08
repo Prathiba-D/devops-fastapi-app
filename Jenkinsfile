@@ -152,6 +152,11 @@
                 // Apply service (safe, idempotent)
                 sh "kubectl apply -f k8s/service.yaml"
 
+                sh '''
+                        echo "Watching pods for 20 seconds..."
+                        timeout 20 kubectl get pods -w || true
+                '''
+
                 // Wait for rollout to complete
                 sh "kubectl rollout status deployment fastapi-deployment"
             }
