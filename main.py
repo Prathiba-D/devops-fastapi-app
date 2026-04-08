@@ -30,6 +30,10 @@ def home():
     record_metrics("/", time.time() - start)
     return result
 
+# Collect user input
+@app.get("/form")
+def get_form(request: Request):
+    return templates.TemplateResponse("form.html", {"request": request})
 
 # Submit endpoint
 @app.post("/submit")
