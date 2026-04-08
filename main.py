@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 
 app = FastAPI(title="FastAPI Monitoring App", version="1.0.0")
+templates = Jinja2Templates(directory="templates")
 
 # Metrics
 REQUEST_COUNT = Counter("fastapi_requests_total", "Total requests", ["endpoint"])
