@@ -25,7 +25,7 @@ def home():
     result = {
         "status": "success",
         "service": "fastapi-app",
-        "message": "🚀 Welcome to FastAPI Monitoring App!!",
+        "message": "🚀 Welcome to FastAPI Monitoring App!!!",
         "timestamp": datetime.utcnow().isoformat()
     }
 
