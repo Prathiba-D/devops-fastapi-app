@@ -25,7 +25,7 @@ def home():
     result = {
         "status": "success",
         "service": "fastapi-app",
-        "message": "🚀 Welcome to FastAPI Monitoring App!!!",
+        "message": "🚀 Welcome to FastAPI Monitoring Application!!!",
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -45,7 +45,7 @@ def submit(name: str = Form(...)):
     result = {
         "status": "success",
         "service": "fastapi-app",
-        "message": f"👋 Hello, {name}!",
+        "message": f"👋 Hiiiii, {name}!",
         "timestamp": datetime.utcnow().isoformat()
     }
 
