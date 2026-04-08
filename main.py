@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Form
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from fastapi import FastAPI, Form, Request
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import Response
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from datetime import datetime
 import time
 
