@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - "localhost:9093"   # Alertmanager running on same EC2
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  - job_name: "worker-node"
+    static_configs:
+      - targets:
+          - "<target-ip>:9100"  # Node Exporter
+          - "<target-ip>:30080" # Application service
