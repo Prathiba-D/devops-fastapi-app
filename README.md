@@ -12,7 +12,7 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 </p>
 <p align="center">
   <img src="images/jenkins-pipeline-stages.PNG" width="700"/><br>
-  Automated CI/CD pipeline showcasing build, security scan, and Kubernetes deployment stages
+  CI/CD pipeline showcasing build, security scan, and Kubernetes deployment stages
   <br><br>
 </p>
 <p align="center">
