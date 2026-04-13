@@ -190,4 +190,14 @@ Provisioned a Kubernetes cluster using kOps with AWS as the cloud provider<br>
   Application-level metrics exposed via FastAPI and scraped by Prometheus
   <br><br>
 </p>
-
+<h4>📂 Project Structure</h4>
+<pre>
+devops-fastapi-app/
+│── main.py                  # FastAPI application source code
+│── Dockerfile               # Container build definition
+│── Jenkinsfile              # CI/CD pipeline configuration
+│── k8s/                     # Kubernetes manifests (Deployment, Service)
+│── monitoring/              # Prometheus & Alertmanager configs
+│── images/                  # Screenshots used in README.md
+│── README.md                # Project documentation
+</pre>
