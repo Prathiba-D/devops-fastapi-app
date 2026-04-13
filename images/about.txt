@@ -1,0 +1,1 @@
+This folder has  the images that were captured when building this project.
