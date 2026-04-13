@@ -6,6 +6,6 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 
 <h4>📸 Demo</h4>
 <p align="center">
-  <img src="images/app-deployed-home.PNG" width="700"/>
+  <img src="images/app-deployed-home.PNG" width="700"/><br>
   FastAPI application successfully deployed and accessible via Kubernetes service
 </p>
