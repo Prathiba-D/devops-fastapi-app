@@ -67,8 +67,7 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 </table>
 
 <h4>⚙️ CI Server Setup (Jenkins)</h4>
-Configured a dedicated CI server with required tools and permissions 
-<br>
+<p>Configured a dedicated CI server with required tools and permissions </p>
 <p align="center">
   <img src="images/ci-tools-installed.PNG" width="700"/><br>
   Installed tools
@@ -102,3 +101,93 @@ Provisioned a Kubernetes cluster using kOps with AWS as the cloud provider<br>
   KOPS Cluster
   <br><br>
 </p>
+
+<h4>🔄 CI/CD Pipeline</h4>
+<p>Fully automated pipeline triggered on code changes</p><br>
+<p align="center">
+  <img src="images/jenkins-pipeline-stages.PNG" width="700"/><br>
+  Pipeline Execution Flow
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/aws-ecr-repository.PNG" width="700"/><br>
+  AWS ECR Repository
+  <br><br>
+</p>
+
+<h4>Pipeline Stages</h4>
+<ol>
+  <li>Code pushed to GitHub</li>
+  <li>Jenkins pipeline triggered via webhook</li>
+  <li>Code quality analysis (SonarQube)</li>
+  <li>Docker image built</li>
+  <li>Security scan (Trivy)</li>
+  <li>Image pushed to AWS ECR</li>
+  <li>Deployment to Kubernetes</li>
+</ol>
+
+<h4>🔐 Code Quality & Security</h4>
+<p>Integrated quality checks and vulnerability scanning into CI pipeline</p><br>
+<p align="center">
+  <img src="images/sonarqube-dashboard.PNG" width="700"/><br>
+  SonarQube Analysis
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/sonarqube-quality-gate.PNG" width="700"/><br>
+  Quality Gate Status
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/trivy-scan-report.PNG" width="700"/><br>
+  Trivy Vulnerability Scan
+  Report is live <a href="https://prathiba-d.github.io/devops-fastapi-app/">here</a>
+  <br><br>
+</p>
+
+<h4>☸️ Kubernetes Deployment</h4>
+<p>Deployed application using Kubernetes with zero-downtime strategy</p><br>
+<p align="center">
+  <img src="images/k8s-nodes.PNG" width="700"/><br>
+  Cluster Nodes Status
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/k8s-rolling-update.PNG" width="700"/><br>
+  Rolling Update Strategy
+  <br><br>
+</p>
+
+<h4>📊 Monitoring & Observability</h4>
+<p>Implemented full-stack observability using Prometheus, Alertmanager, and Grafana for metrics collection, alerting, and visualization</p>
+<p align="center">
+  <img src="images/prometheus-targets-up.PNG" width="700"/><br>
+  Prometheus Targets Up (Healthy)
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/prometheus-target-down.PNG" width="700"/><br>
+  Prometheus Target Down (Failure Scenario)
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/alertmanager-active-alerts.PNG" width="700"/><br>
+  Active Alerts Dashboard - Alertmanager aggregating and displaying active alerts triggered by Prometheus rules
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/alertmanager-email-notification.PNG" width="700"/><br>
+  Automated email alerts sent based on configured alerting rules
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/node-exporter-metrics.PNG" width="700"/><br>
+  Node exporter - System-level metrics including CPU, memory, and resource utilization
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/fastapi-metrics-endpoint.PNG" width="700"/><br>
+  Application-level metrics exposed via FastAPI and scraped by Prometheus
+  <br><br>
+</p>
+
