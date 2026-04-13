@@ -20,3 +20,48 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
   Grafana dashboard visualizing real-time system and application metrics
   <br><br>
 </p>
+
+<h4>🏗️ Architecture</h4>
+<h4>⚙️ Tech Stack</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Tools Used</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CI/CD</td>
+      <td>Jenkins</td>
+    </tr>
+    <tr>
+      <td>Containerization</td>
+      <td>Docker</td>
+    </tr>
+    <tr>
+      <td>Orchestration</td>
+      <td>Kubernetes (kOps on AWS)</td>
+    </tr>
+    <tr>
+      <td>Image Registry</td>
+      <td>AWS ECR</td>
+    </tr>
+    <tr>
+      <td>Monitoring</td>
+      <td>Prometheus, Grafana</td>
+    </tr>
+    <tr>
+      <td>Security</td>
+      <td>Trivy</td>
+    </tr>
+    <tr>
+      <td>Code Quality</td>
+      <td>SonarQube</td>
+    </tr>
+    <tr>
+      <td>Backend</td>
+      <td>FastAPI</td>
+    </tr>
+  </tbody>
+</table>
