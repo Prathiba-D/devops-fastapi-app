@@ -65,3 +65,39 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
     </tr>
   </tbody>
 </table>
+
+<h4>⚙️ CI Server Setup (Jenkins)</h4>
+Configured a dedicated CI server with required tools and permissions
+<p align="center">
+  <img src="images/ci-tools-installed.PNG" width="700"/><br>
+  Installed tools
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/jenkins-plugins.PNG" width="700"/><br>
+  Jenkins Plugins
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/iam-role-policies.PNG" width="700"/><br>
+  Custom IAM Role attached to CI Server
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/jenkins-webhook-config.PNG" width="700"/><br>
+  GitHub Webhook Integration
+  <br><br>
+</p>
+
+<h4>🏗️ Infrastructure Setup (AWS + kOps)</h4>
+Provisioned a Kubernetes cluster using kOps with AWS as the cloud provider<br>
+<p align="center">
+  <img src="images/e2-instances.PNG" width="700"/><br>
+  EC2 Instances
+  <br><br>
+</p>
+<p align="center">
+  <img src="images/kops-cluster-creation.PNG" width="700"/><br>
+  EC2 Instances
+  <br><br>
+</p>
