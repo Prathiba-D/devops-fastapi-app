@@ -8,12 +8,15 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 <p align="center">
   <img src="images/app-deployed-userform.PNG" width="700"/><br>
   FastAPI application successfully deployed and accessible via Kubernetes service
+  <br><br>
 </p>
 <p align="center">
   <img src="images/jenkins-pipeline-stages.PNG" width="700"/><br>
   Automated CI/CD pipeline showcasing build, security scan, and Kubernetes deployment stages
+  <br><br>
 </p>
 <p align="center">
   <img src="images/grafana-dashboard.PNG" width="700"/><br>
   Grafana dashboard visualizing real-time system and application metrics
+  <br><br>
 </p>
