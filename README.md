@@ -5,5 +5,6 @@ This project demonstrates a real-world DevOps workflow, implementing a fully aut
 It integrates CI/CD automation, containerization, Kubernetes orchestration, security scanning, and observability, closely resembling a production environment setup.
 
 <h4>📸 Demo</h4>
-![Grafana Dashboard](images/grafana-dashboard.png)
-> Real-time monitoring dashboard showing system metrics
+<p align="center">
+  <img src="images/grafana-dashboard.png" width="700"/>
+</p>
