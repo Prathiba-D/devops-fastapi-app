@@ -6,5 +6,5 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 
 <h4>📸 Demo</h4>
 <p align="center">
-  <img src="images/grafana-dashboard.png" width="700"/>
+  <img src="images/grafana-dashboard.PNG" width="700"/>
 </p>
