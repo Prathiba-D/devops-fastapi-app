@@ -201,3 +201,22 @@ devops-fastapi-app/
 │── images/                  # Screenshots used in README.md
 │── README.md                # Project documentation
 </pre>
+<pre>
+<h4>💡 Key Highlights</h4>
+✅ Automated CI/CD pipeline from code commit to deployment using Jenkins  
+✅ Deployed a production-like Kubernetes cluster using kOps on AWS  
+✅ Implemented container security scanning using Trivy  
+✅ Enforced code quality gates with SonarQube  
+✅ Achieved zero-downtime deployments using Kubernetes rolling updates  
+✅ Enabled full system observability with Prometheus & Grafana dashboards
+</pre>
+
+<h4>🎯 What This Project Demonstrates</h4>
+<ul>
+  <li>Strong understanding of DevOps principles and workflows</li>
+  <li>Hands-on experience with CI/CD automation</li>
+  <li>Hands-on experience with containerization & orchestration</li>
+  <li>Hands-on experience with infrastructure provisioning</li>
+  <li>Hands-on experience with monitoring & alerting systems</li>
+  <li>Ability to build production-ready, scalable systems</li>
+</ul>
