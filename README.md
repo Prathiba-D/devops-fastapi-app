@@ -22,10 +22,10 @@ It integrates CI/CD automation, containerization, Kubernetes orchestration, secu
 </p>
 
 <h4>🏗️ Architecture</h4>
+<p>End-to-end DevOps architecture showcasing CI/CD automation, Kubernetes orchestration, and observability pipeline <br></p>
 <p align="center">
-  End-to-end DevOps architecture showcasing CI/CD automation, Kubernetes orchestration, and observability pipeline
-  <img src="images/Devops-Pipeline-Architecture.png" width="900" height="500"/><br>
-  <br><br>
+  <img src="images/Devops-Pipeline-Architecture.png" width="700"><br>
+  <br>
 </p>
 <h4>⚙️ Tech Stack</h4>
 <table>
